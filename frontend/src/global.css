@@ -1,0 +1,55 @@
+@font-face {
+  font-family: "PP Telegraf";
+  src: url("/fonts/PPTelegraf-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --c-turquoise: #00eded;
+  --c-blue: #053057;
+  --c-light-turquoise: #a2f3f3;
+  --c-dark: #0b0d0e;
+  --c-cool-gray: #314550;
+  --c-white: #ffffff;
+  --c-off-white: #f4f3f0;
+
+  --font: "PP Telegraf", "Montserrat", system-ui, sans-serif;
+
+  --grid-bg:
+    linear-gradient(rgba(0, 237, 237, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 237, 237, 0.012) 1px, transparent 1px);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--c-dark);
+  color: var(--c-white);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font-family: var(--font);
+}
+
+input,
+select,
+textarea {
+  font-family: var(--font);
+}

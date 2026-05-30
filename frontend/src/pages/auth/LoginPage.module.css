@@ -1,0 +1,95 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-dark);
+  background-image: var(--grid-bg);
+  background-size: 40px 40px;
+}
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(0, 237, 237, 0.12);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoText {
+  font-family: var(--font);
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.logoBrand {
+  color: var(--c-white);
+}
+
+.logoSep {
+  color: var(--c-cool-gray);
+}
+
+.logoApp {
+  color: var(--c-turquoise);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(0, 237, 237, 0.1);
+}
+
+.tab {
+  all: unset;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-cool-gray);
+  padding: 0 0 0.75rem;
+  margin-right: 1.75rem;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.tab:hover {
+  color: var(--c-white);
+}
+
+.tabActive {
+  color: var(--c-turquoise);
+  border-bottom-color: var(--c-turquoise);
+}
+
+/* Form */
+.formTitle {
+  font-family: var(--font);
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--c-white);
+  letter-spacing: 0.01em;
+  margin-bottom: 0.25rem;
+}
+
+.formSub {
+  font-family: var(--font);
+  font-size: 0.85rem;
+  color: var(--c-cool-gray);
+}

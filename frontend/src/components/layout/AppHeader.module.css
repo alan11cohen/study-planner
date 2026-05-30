@@ -1,0 +1,49 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 60px;
+  background: rgba(11, 13, 14, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 237, 237, 0.12);
+}
+
+.logo {
+  cursor: default;
+}
+
+.brandName {
+  font-family: var(--font);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-white);
+}
+
+.divider {
+  font-family: var(--font);
+  font-size: 0.9rem;
+  color: var(--c-cool-gray);
+  margin: 0 2px;
+  user-select: none;
+}
+
+.appName {
+  font-family: var(--font);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-turquoise);
+}
+
+.userName {
+  font-family: var(--font);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  color: var(--c-cool-gray);
+  text-transform: uppercase;
+}

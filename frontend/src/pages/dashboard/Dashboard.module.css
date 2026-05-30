@@ -1,0 +1,110 @@
+.page {
+  min-height: 100vh;
+  background: var(--c-dark);
+  background-image: var(--grid-bg);
+  background-size: 40px 40px;
+}
+
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+}
+
+/* Greeting */
+.greeting {
+  margin-bottom: 2.5rem;
+}
+
+.greetingTitle {
+  font-family: var(--font);
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: var(--c-white);
+  letter-spacing: 0.01em;
+  margin-bottom: 0.4rem;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stat {
+  font-family: var(--font);
+  font-size: 0.82rem;
+  color: var(--c-cool-gray);
+}
+
+.statDot {
+  color: rgba(49, 69, 80, 0.5);
+  font-size: 0.7rem;
+}
+
+/* Loader */
+.loader {
+  display: flex;
+  justify-content: center;
+  padding: 4rem;
+}
+
+/* Empty plans */
+.emptyPlans {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 4rem 2rem;
+  border: 1px dashed rgba(49, 69, 80, 0.6);
+  border-radius: 8px;
+}
+
+.emptyPlansText {
+  font-family: var(--font);
+  color: var(--c-cool-gray);
+  font-size: 0.9rem;
+}
+
+.accent {
+  color: var(--c-turquoise);
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+/* Add card */
+.addCard {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.25rem 1.5rem;
+  background: transparent;
+  border: 1px dashed rgba(0, 237, 237, 0.18);
+  border-radius: 8px;
+  min-height: 120px;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.addCard:hover {
+  background: rgba(0, 237, 237, 0.04);
+  border-color: rgba(0, 237, 237, 0.35);
+}
+
+.addCardLabel {
+  font-family: var(--font);
+  font-size: 0.82rem;
+  color: var(--c-turquoise);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
