@@ -5,6 +5,7 @@ frontend/dist/
 # Backend
 backend/.venv/
 backend/test.db
+backend/**/*.db
 __pycache__/
 **/__pycache__/
 **/*.pyc

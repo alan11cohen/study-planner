@@ -55,9 +55,29 @@ docker compose down -v && docker compose up --build
 | POST   | /plans                          | Create study plan        |
 | GET    | /plans/{id}                     | Get study plan           |
 | PATCH  | /plans/{id}                     | Update plan              |
+| POST   | /plans/{id}/generate-tasks      | AI-generate tasks (US1)  |
 | POST   | /plans/{id}/tasks               | Add task to plan         |
 | GET    | /plans/{id}/tasks               | List tasks               |
 | PATCH  | /plans/{id}/tasks/{taskId}      | Toggle task completion   |
+
+## AI Configuration (User Story 1)
+
+The task generator (`POST /plans/{id}/generate-tasks`) uses an LLM behind a
+pluggable abstraction. Configure it via environment variables (see
+[`.env.example`](.env.example)):
+
+| Variable         | Default       | Description                                              |
+|------------------|---------------|----------------------------------------------------------|
+| `LLM_PROVIDER`   | `auto`        | `auto` \| `openai` \| `stub`                             |
+| `OPENAI_API_KEY` | _(empty)_     | OpenAI key. If empty, `auto` falls back to the stub.     |
+| `OPENAI_MODEL`   | `gpt-4o-mini` | Chat model used for structured generation.               |
+
+**No key? It still runs.** With `LLM_PROVIDER=auto` and no key, the backend uses
+a deterministic offline stub, so the endpoint and the full test suite work with
+zero credentials. To use the real model, copy `.env.example` to `.env` and set
+`OPENAI_API_KEY`.
+
+Design notes and trade-offs: [`docs/US1-task-generation.md`](docs/US1-task-generation.md).
 
 ## Development
 

@@ -1,10 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Body, Depends
 
 from ...schemas.study_plan import StudyPlanCreate, StudyPlanRead, StudyPlanUpdate
 from ...schemas.study_task import StudyTaskCreate, StudyTaskRead, StudyTaskUpdate
+from ...schemas.task_generation import GenerateTasksRequest, GenerateTasksResponse
 from ...services.plan_service import PlanService
+from ...services.task_generation_service import TaskGenerationService
 from ...services.task_service import TaskService
-from ..deps import get_plan_service, get_task_service
+from ..deps import get_plan_service, get_task_generation_service, get_task_service
 
 router = APIRouter(prefix="/plans", tags=["plans"])
 
@@ -26,6 +28,20 @@ def update_plan(
     svc: PlanService = Depends(get_plan_service),
 ):
     return svc.update_plan(plan_id, data)
+
+
+@router.post(
+    "/{plan_id}/generate-tasks",
+    response_model=GenerateTasksResponse,
+    status_code=201,
+)
+def generate_tasks(
+    plan_id: int,
+    data: GenerateTasksRequest = Body(default_factory=GenerateTasksRequest),
+    svc: TaskGenerationService = Depends(get_task_generation_service),
+):
+    """Generate study tasks from the plan's goal/constraints using an LLM."""
+    return svc.generate_tasks(plan_id, data)
 
 
 @router.post("/{plan_id}/tasks", response_model=StudyTaskRead, status_code=201)
