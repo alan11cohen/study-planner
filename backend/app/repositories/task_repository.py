@@ -15,6 +15,25 @@ class TaskRepository:
         self.db.refresh(task)
         return task
 
+    def create_many(
+        self, plan_id: int, items: list[StudyTaskCreate]
+    ) -> list[StudyTask]:
+        tasks = [StudyTask(plan_id=plan_id, **item.model_dump()) for item in items]
+        self.db.add_all(tasks)
+        self.db.commit()
+        for task in tasks:
+            self.db.refresh(task)
+        return tasks
+
+    def delete_by_plan_id(self, plan_id: int) -> int:
+        deleted = (
+            self.db.query(StudyTask)
+            .filter(StudyTask.plan_id == plan_id)
+            .delete(synchronize_session=False)
+        )
+        self.db.commit()
+        return deleted
+
     def get_by_id(self, task_id: int) -> StudyTask | None:
         return self.db.query(StudyTask).filter(StudyTask.id == task_id).first()
 
