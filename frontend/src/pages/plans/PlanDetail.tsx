@@ -10,15 +10,18 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconArrowLeft,
+  IconBrain,
   IconCalendar,
   IconCircleCheck,
   IconClock,
   IconPlus,
+  IconSparkles,
   IconTarget,
 } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { api, type StudyTask } from "../../api/client";
+import { api, type AgentGenerateResponse, type PlanDocument, type StudyTask } from "../../api/client";
+import DocumentPanel from "../../components/document/DocumentPanel";
 import AddTaskModal from "../../components/task/AddTaskModal";
 import TaskItem from "../../components/task/TaskItem";
 import styles from "./PlanDetail.module.css";
@@ -52,6 +55,12 @@ export default function PlanDetail() {
     enabled: !!id,
   });
 
+  const { data: planDocuments = [] } = useQuery<PlanDocument[]>({
+    queryKey: ["documents", id],
+    queryFn: () => api.getDocuments(id),
+    enabled: !!id,
+  });
+
   const toggleTask = useMutation({
     mutationFn: ({
       taskId,
@@ -64,6 +73,24 @@ export default function PlanDetail() {
       qc.invalidateQueries({ queryKey: ["tasks", id] });
       qc.invalidateQueries({ queryKey: ["taskStats"] });
     },
+  });
+
+  const generateTasks = useMutation({
+    mutationFn: () => api.generateTasks(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["tasks", id] });
+      qc.invalidateQueries({ queryKey: ["taskStats"] });
+    },
+    onError: () => setTimeout(() => generateTasks.reset(), 5000),
+  });
+
+  const agentGenerate = useMutation<AgentGenerateResponse>({
+    mutationFn: () => api.agentGenerateTasks(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["tasks", id] });
+      qc.invalidateQueries({ queryKey: ["taskStats"] });
+    },
+    onError: () => setTimeout(() => agentGenerate.reset(), 5000),
   });
 
   const completedCount = tasks.filter((t) => t.completed).length;
@@ -163,9 +190,29 @@ export default function PlanDetail() {
             <Group gap="sm">
               {tasks.length > 0 && (
                 <Badge color="cyan" variant="light" size="sm">
-                  {totalHours}h total
+                  {Math.round(totalHours * 10) / 10}h total
                 </Badge>
               )}
+              <Button
+                leftSection={<IconSparkles size={13} />}
+                color="grape"
+                size="xs"
+                variant="light"
+                loading={generateTasks.isPending}
+                onClick={() => generateTasks.mutate()}
+              >
+                Generate with AI
+              </Button>
+              <Button
+                leftSection={<IconBrain size={13} />}
+                color="indigo"
+                size="xs"
+                variant="light"
+                loading={agentGenerate.isPending}
+                onClick={() => agentGenerate.mutate()}
+              >
+                Agent Plan
+              </Button>
               <Button
                 leftSection={<IconPlus size={13} />}
                 color="cyan"
@@ -177,6 +224,28 @@ export default function PlanDetail() {
               </Button>
             </Group>
           </Group>
+
+          {generateTasks.isError && (
+            <Text c="red" size="sm" mb="sm">
+              {generateTasks.error instanceof Error
+                ? generateTasks.error.message
+                : "Could not generate tasks."}
+            </Text>
+          )}
+
+          {agentGenerate.isError && (
+            <Text c="red" size="sm" mb="sm">
+              {agentGenerate.error instanceof Error
+                ? agentGenerate.error.message
+                : "Agent could not generate tasks."}
+            </Text>
+          )}
+
+          {agentGenerate.isSuccess && agentGenerate.data.subtopics.length > 0 && (
+            <Text size="xs" c="dimmed" mb="sm">
+              Agent covered: {agentGenerate.data.subtopics.join(" · ")}
+            </Text>
+          )}
 
           {isComplete && (
             <div className={styles.completionBanner}>
@@ -217,6 +286,8 @@ export default function PlanDetail() {
             </div>
           )}
         </div>
+
+        <DocumentPanel planId={id} documents={planDocuments} />
       </main>
 
       <AddTaskModal opened={addTaskOpened} onClose={closeAddTask} planId={id} />
