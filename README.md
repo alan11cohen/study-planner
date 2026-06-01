@@ -55,9 +55,47 @@ docker compose down -v && docker compose up --build
 | POST   | /plans                          | Create study plan        |
 | GET    | /plans/{id}                     | Get study plan           |
 | PATCH  | /plans/{id}                     | Update plan              |
+| POST   | /plans/{id}/generate-tasks      | AI-generate tasks (US1)  |
 | POST   | /plans/{id}/tasks               | Add task to plan         |
 | GET    | /plans/{id}/tasks               | List tasks               |
 | PATCH  | /plans/{id}/tasks/{taskId}      | Toggle task completion   |
+| POST   | /plans/{id}/documents           | Upload PDF document (US2) |
+| GET    | /plans/{id}/documents           | List uploaded documents  |
+| POST   | /plans/{id}/documents/chat      | Ask a question about documents (US2) |
+
+## AI Configuration (User Story 1)
+
+The task generator (`POST /plans/{id}/generate-tasks`) uses an LLM behind a
+pluggable abstraction. Configure it via environment variables (see
+[`.env.example`](.env.example)):
+
+| Variable         | Default       | Description                                              |
+|------------------|---------------|----------------------------------------------------------|
+| `LLM_PROVIDER`   | `auto`        | `auto` \| `openai` \| `stub`                             |
+| `OPENAI_API_KEY` | _(empty)_     | OpenAI key. If empty, `auto` falls back to the stub.     |
+| `OPENAI_MODEL`   | `gpt-4o-mini` | Chat model used for structured generation.               |
+
+**No key? It still runs.** With `LLM_PROVIDER=auto` and no key, the backend uses
+a deterministic offline stub, so the endpoint and the full test suite work with
+zero credentials. To use the real model, copy `.env.example` to `.env` and set
+`OPENAI_API_KEY`.
+
+Design notes and trade-offs: [`docs/US1-task-generation.md`](docs/US1-task-generation.md).
+
+## AI Configuration (User Story 2)
+
+The document chat (`POST /plans/{id}/documents/chat`) uses LlamaIndex for ingestion and retrieval, pgvector for vector storage, and the same `LLMClient` abstraction as US1 for the answer generation step.
+
+| Variable | Default | Description |
+|---|---|---|
+| `RAG_PROVIDER` | `auto` | `auto` \| `stub`. `auto` uses LlamaIndex when `OPENAI_API_KEY` is set. |
+| `EMBEDDING_MODEL` | `text-embedding-3-small` | OpenAI embedding model |
+| `EMBEDDING_DIMS` | `1536` | Must match the model's output dimensions |
+| `RAG_CHUNK_SIZE` | `512` | Chunk size in tokens |
+| `RAG_CHUNK_OVERLAP` | `50` | Token overlap between consecutive chunks |
+| `RAG_TOP_K` | `5` | Chunks retrieved per query |
+| `RAG_SCORE_THRESHOLD` | `0.20` | Minimum cosine similarity to pass a chunk to the LLM |
+
 
 ## Development
 

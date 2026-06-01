@@ -38,7 +38,15 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
     },
     ...init,
   });
-  if (!res.ok) throw new Error(await res.text());
+  if (!res.ok) {
+    const text = await res.text();
+    let message = text;
+    try {
+      const json = JSON.parse(text) as { detail?: string };
+      if (json.detail) message = json.detail;
+    } catch {}
+    throw new Error(message);
+  }
   return res.json() as Promise<T>;
 }
 
@@ -62,6 +70,27 @@ export type AuthResponse = {
   access_token: string;
   token_type: string;
   user: User;
+};
+export type GenerateTasksResponse = {
+  plan_id: number;
+  tasks: StudyTask[];
+  model: string;
+  attempts: number;
+  warnings: string[];
+};
+export type PlanDocument = {
+  id: number;
+  plan_id: number;
+  filename: string;
+  content_type: string;
+  size_bytes: number;
+  chunk_count: number;
+  created_at: string;
+};
+export type ChatResponse = {
+  answer: string;
+  sources: string[];
+  grounded: boolean;
 };
 
 export const api = {
@@ -114,9 +143,52 @@ export const api = {
 
   getTasks: (planId: number) => req<StudyTask[]>(`/plans/${planId}/tasks`),
 
+  generateTasks: (
+    planId: number,
+    data?: {
+      count?: number;
+      extra_instructions?: string;
+      replace_existing?: boolean;
+    },
+  ) =>
+    req<GenerateTasksResponse>(`/plans/${planId}/generate-tasks`, {
+      method: "POST",
+      body: JSON.stringify(data ?? {}),
+    }),
+
   toggleTask: (planId: number, taskId: number, completed: boolean) =>
     req<StudyTask>(`/plans/${planId}/tasks/${taskId}`, {
       method: "PATCH",
       body: JSON.stringify({ completed }),
+    }),
+
+  getDocuments: (planId: number) =>
+    req<PlanDocument[]>(`/plans/${planId}/documents`),
+
+  uploadDocument: async (planId: number, file: File): Promise<PlanDocument> => {
+    const token = getToken();
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch(`${BASE}/plans/${planId}/documents`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      let message = text;
+      try {
+        const json = JSON.parse(text) as { detail?: string };
+        if (json.detail) message = json.detail;
+      } catch { /* keep raw text */ }
+      throw new Error(message);
+    }
+    return res.json() as Promise<PlanDocument>;
+  },
+
+  chatWithDocuments: (planId: number, question: string) =>
+    req<ChatResponse>(`/plans/${planId}/documents/chat`, {
+      method: "POST",
+      body: JSON.stringify({ question }),
     }),
 };
