@@ -21,6 +21,14 @@ class Settings(BaseSettings):
     TASKGEN_MAX_TASK_HOURS_RATIO: float = 1.5
     TASKGEN_BUDGET_TOLERANCE: float = 1.25
 
+    RAG_PROVIDER: str = "auto"
+    EMBEDDING_MODEL: str = "text-embedding-3-small"
+    EMBEDDING_DIMS: int = 1536
+    RAG_CHUNK_SIZE: int = 512
+    RAG_CHUNK_OVERLAP: int = 50
+    RAG_TOP_K: int = 5
+    RAG_SCORE_THRESHOLD: float = 0.20
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 

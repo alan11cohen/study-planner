@@ -19,7 +19,8 @@ import {
 } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { api, type StudyTask } from "../../api/client";
+import { api, type PlanDocument, type StudyTask } from "../../api/client";
+import DocumentPanel from "../../components/document/DocumentPanel";
 import AddTaskModal from "../../components/task/AddTaskModal";
 import TaskItem from "../../components/task/TaskItem";
 import styles from "./PlanDetail.module.css";
@@ -50,6 +51,12 @@ export default function PlanDetail() {
   const { data: tasks = [], isLoading: tasksLoading } = useQuery<StudyTask[]>({
     queryKey: ["tasks", id],
     queryFn: () => api.getTasks(id),
+    enabled: !!id,
+  });
+
+  const { data: planDocuments = [] } = useQuery<PlanDocument[]>({
+    queryKey: ["documents", id],
+    queryFn: () => api.getDocuments(id),
     enabled: !!id,
   });
 
@@ -244,6 +251,8 @@ export default function PlanDetail() {
             </div>
           )}
         </div>
+
+        <DocumentPanel planId={id} documents={planDocuments} />
       </main>
 
       <AddTaskModal opened={addTaskOpened} onClose={closeAddTask} planId={id} />
