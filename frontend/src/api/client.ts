@@ -78,6 +78,13 @@ export type GenerateTasksResponse = {
   attempts: number;
   warnings: string[];
 };
+export type AgentGenerateResponse = {
+  plan_id: number;
+  tasks: StudyTask[];
+  subtopics: string[];
+  attempts: number;
+  warnings: string[];
+};
 export type PlanDocument = {
   id: number;
   plan_id: number;
@@ -180,7 +187,7 @@ export const api = {
       try {
         const json = JSON.parse(text) as { detail?: string };
         if (json.detail) message = json.detail;
-      } catch { /* keep raw text */ }
+      } catch {}
       throw new Error(message);
     }
     return res.json() as Promise<PlanDocument>;
@@ -190,5 +197,11 @@ export const api = {
     req<ChatResponse>(`/plans/${planId}/documents/chat`, {
       method: "POST",
       body: JSON.stringify({ question }),
+    }),
+
+  agentGenerateTasks: (planId: number, replaceExisting = false) =>
+    req<AgentGenerateResponse>(`/plans/${planId}/agent-generate-tasks`, {
+      method: "POST",
+      body: JSON.stringify({ replace_existing: replaceExisting }),
     }),
 };

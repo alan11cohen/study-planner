@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     RAG_TOP_K: int = 5
     RAG_SCORE_THRESHOLD: float = 0.20
 
+    AGENT_MAX_ATTEMPTS: int = 3
+    AGENT_MIN_SUBTOPICS: int = 3
+    AGENT_MAX_SUBTOPICS: int = 7
+
     model_config = {"env_file": ".env", "extra": "ignore"}
 
 

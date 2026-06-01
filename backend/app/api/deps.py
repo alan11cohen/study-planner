@@ -7,6 +7,7 @@ from ..ai.task_generation import TaskGenerator
 from ..core.database import get_db
 from ..llm import get_llm_client
 from ..llm.base import LLMClient
+from ..services.agent_service import AgentService
 from ..services.chat_service import ChatService
 from ..services.document_service import DocumentService
 from ..services.plan_service import PlanService
@@ -47,3 +48,11 @@ def get_chat_service(
     llm: LLMClient = Depends(get_llm_client),
 ) -> ChatService:
     return ChatService(db, retriever, llm)
+
+
+def get_agent_service(
+    db: Session = Depends(get_db),
+    retriever: Retriever = Depends(get_retriever),
+    llm: LLMClient = Depends(get_llm_client),
+) -> AgentService:
+    return AgentService(db, llm, retriever)
